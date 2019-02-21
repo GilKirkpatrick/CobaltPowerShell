@@ -7,21 +7,21 @@ Param(
 	[Parameter(HelpMessage="The OData filter string to use")][string]$ODataFilter,
 	[Parameter(HelpMessage="The navigation properties to expand")][string[]]$Expand = @()
 )
-	Get-CobaltEntities -Connection $Connection -ODataType $ODataType -ODataFilter $ODataFilter -Expand $Expand -Verbose:([bool]$PSBoundParameters["Verbose"].IsPresent)
+	Get-CobaltEntities -Connection $Connection -ODataType $ODataType -ODataFilter $ODataFilter -Expand $Expand -Verbose:([bool]$PSBoundParameters['Verbose'].IsPresent)
 }
 
 Function New-CobaltIDPEndpoint {
-[CmdletBinding(SupportsShouldProcess=$True, ConfirmImpact="Medium")]
+[CmdletBinding(SupportsShouldProcess=$True, ConfirmImpact='Medium')]
 param (
 	[Parameter(HelpMessage="The Cobalt connection object to use for the OData operation")][PSObject]$Connection = (Get-DefaultCobaltConnection),
     [Parameter(Mandatory=$True, HelpMessage="The name of the new IDP endpoint")][string]$Name,
 	[Parameter(Mandatory=$True, HelpMessage="The name of the tenant this IDP endpoint is associated with")][string]$Tenant,
 	[Parameter(Mandatory=$True, HelpMessage="The zone this identity service is associated with")][string]$Zone,
     [Parameter(HelpMessage="The name of the OData User entity property used to contain consented OAuth scopes")][string]$ConsentProperty,
-	[Parameter(HelpMessage="The name of the OData User entity property used to indicate that it is enabled")][string]$EnabledProperty = "Enabled",
+	[Parameter(HelpMessage="The name of the OData User entity property used to indicate that it is enabled")][string]$EnabledProperty = 'Enabled',
 	[Parameter(HelpMessage="The URL path for the identity provider endpoint, e.g. /csp/identity/")][string]$Path,
-	[Parameter(HelpMessage="The name of the OData User property to use as a subject identifier")][string]$SubjectIDProperty = "Username",
-	[Parameter(HelpMessage="The name of the OData User property to use as a username")][string]$UsernameProperty = "Username",
+	[Parameter(HelpMessage="The name of the OData User property to use as a subject identifier")][string]$SubjectIDProperty = 'Username',
+	[Parameter(HelpMessage="The name of the OData User property to use as a username")][string]$UsernameProperty = 'Username',
     [Parameter(HelpMessage="The description of the new IDP endpoint")][string[]]$Description = @("New IDPEndpoint created $(Get-Date)"),
     [Parameter(HelpMessage="The public key to use for this endpoint in JSON string format")][string[]]$Public,
 	[Parameter(HelpMessage="The private key to use for this endpoint in JSON string format")][string]$Private,
