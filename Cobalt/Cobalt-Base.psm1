@@ -212,7 +212,7 @@ Function Invoke-CobaltAction {
 #		}
 		$Path += "/$ActionName"
 		if($PSCmdlet.ShouldProcess("$ActionName")){
-			(Invoke-CobaltQuery -Connection $Connection -Path $Path -Method POST -BodyParameters $Parameters -Verbose:([bool]$PSBoundParameters['Verbose'].IsPresent)).value
+			Invoke-CobaltQuery -Connection $Connection -Path $Path -Method POST -BodyParameters $Parameters -Verbose:([bool]$PSBoundParameters['Verbose'].IsPresent)
 		}
 	}
 }

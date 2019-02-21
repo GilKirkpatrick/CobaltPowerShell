@@ -15,7 +15,7 @@ param(
     [Parameter(HelpMessage="A flag indicating that the IdP should use the SHA1 hashing algorithm")][Boolean]$UseSHA1 = $False,
     [Parameter(HelpMessage="The name of the external authentication service for Cobalt to use")][string]$AuthMode = "simple",
     [Parameter(HelpMessage="A flag indicating that the IdP should return errors to the application")][Switch]$ReturnError,
-    [Parameter(HelpMessage="A flag indicating that the IdP should use SAML Artifact binding")][Switch[$UseArtifact]],
+    [Parameter(HelpMessage="A flag indicating that the IdP should use SAML Artifact binding")][Switch]$UseArtifact,
     [Parameter(HelpMessage="The URI of the application's logout service to support SAML single logout")][string]$LogoutServiceURI,
     [Parameter(HelpMessage="The application's redirect URIs to handle OpenID Connect logout notifications")][string[]]$LogoutRedirectURIs,
     [Parameter(HelpMessage="The format for an the OAuth access token")][string][ValidateSet('JWT','Opaque')]$AccessTokenFormat = 'JWT'

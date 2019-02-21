@@ -6,8 +6,8 @@ Function Get-CobaltOIDCConfiguration {
     )
 
     if($IDPId -eq $null){
-        $IDP = (Get-CobaltIDPEndpoint -Connection $Connection | Select -First 1)
-        if($IDP -eq $null){
+        $IDP = (Get-CobaltIDPEndpoint -Connection $Connection | Select-Object -First 1)
+        if($null -eq $IDP){
             Throw "Could not find an IDP Endpoint to authenticate with"
         }
     }
@@ -19,7 +19,7 @@ Function Get-CobaltOIDCConfiguration {
     $IDPEndpoint = $IDPEndpoint.TrimEnd('/')
 
     $OpenIDConfig = Invoke-RestMethod -Uri "$IDPEndpoint/.well-known/openid-configuration"
-    if($OpenIDConfig -eq $null){
+    if($null -eq $OpenIDConfig){
         Throw "Unable to retrieve $IDPEndpoint/.well-known/openid-configuration"
     }
     $OpenIDConfig
@@ -34,20 +34,20 @@ Function Get-CobaltAccessToken {
         [Parameter(HelpMessage="The EntityUUID of the application to authenticate with. If not specified, the command will pick one")][System.Guid]$SPId
     )
 
-    if($Credential -eq $null -or $Credential.UserName -eq $null){
+    if($null -eq $Credential -or $null -eq $Credential.UserName){
         Throw "You must provide a username and password to authenticate with"
     }
 
-    if($IDPId -eq $null){
-        $IDP = (Get-CobaltIDPEndpoint -Connection $Connection | Select -First 1)
-        if($IDP -eq $null){
+    if($null -eq $IDPId){
+        $IDP = (Get-CobaltIDPEndpoint -Connection $Connection | Select-Object -First 1)
+        if($null -eq $IDP){
             Throw "Could not find an IDP Endpoint to authenticate with"
         }
         Write-Verbose "IDPEndpoint...`n$($IDP | ConvertTo-JSON -Depth 6)"
     }
-    if($SPId -eq $null){
-        $SP = (Get-CobaltServiceProvider -Connection $Connection | Select -First 1)
-        if($SP -eq $null){
+    if($null -eq $SPId){
+        $SP = (Get-CobaltServiceProvider -Connection $Connection | Select-Object -First 1)
+        if($null -eq $SP){
             Throw "Could not find an ServiceProvider to authenticate with"
         }
         Write-Verbose "ServiceProvider...`n$($SP | ConvertTo-JSON -Depth 6)"
@@ -62,7 +62,7 @@ Function Get-CobaltAccessToken {
     $IDPEndpoint = $IDPEndpoint.TrimEnd('/')
 
     $OpenIDConfig = Invoke-RestMethod -Uri "$IDPEndpoint/.well-known/openid-configuration"
-    if($OpenIDConfig -eq $null){
+    if($null -eq $OpenIDConfig){
         Throw "Unable to retrieve $IDPEndpoint/.well-known/openid-configuration"
     }
     Write-Verbose "IDP metadata...`n$($OpenIDConfig | ConvertTo-JSON)"
