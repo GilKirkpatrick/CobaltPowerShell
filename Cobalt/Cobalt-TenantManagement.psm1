@@ -14,7 +14,12 @@ param(
     [Parameter(HelpMessage="A JSON-encoded string describing the SAML attribute assertions to be provided with the authentication message")][string[]]$SamlAttributeConsumingService=@(),
     [Parameter(HelpMessage="A flag indicating that the IdP should use the SHA1 hashing algorithm")][Boolean]$UseSHA1 = $False,
     [Parameter(HelpMessage="The name of the external authentication service for Cobalt to use")][string]$AuthMode = "simple",
-    [Parameter(HelpMessage="A flag indicating that the IdP should return errors to the application")][Boolean]$ReturnError = $False
+    [Parameter(HelpMessage="A flag indicating that the IdP should return errors to the application")][Switch]$ReturnError,
+    [Parameter(HelpMessage="A flag indicating that the IdP should use SAML Artifact binding")][Switch[$UseArtifact]],
+    [Parameter(HelpMessage="The URI of the application's logout service to support SAML single logout")][string]$LogoutServiceURI,
+    [Parameter(HelpMessage="The application's redirect URIs to handle OpenID Connect logout notifications")][string[]]$LogoutRedirectURIs,
+    [Parameter(HelpMessage="The format for an the OAuth access token")][string][ValidateSet('JWT','Opaque')]$AccessTokenFormat = 'JWT'
+    
 )
     $properties = @{
         'Name'=$Name;
@@ -27,14 +32,20 @@ param(
         'Entity'=$Entity;
         'SAMLAttributeConsumingService'=$SAMLAttributeConsumingService;
         'UseSHA1'=$UseSHA1;
-        'ReturnError'=$ReturnError;
-		'AuthMode'=$AuthMode;
-		'UserCertificate'=@()
+        'ReturnError'=[bool]$ReturnError;
+        'UseArtifact'=[bool]$UseArtifact;
+        'AuthMode'=$AuthMode;
+        'AccessTokenFormat'=$AccessTokenFormat;
+        'UserCertificate'=@();
+        'LogoutServiceURI'=$LogoutServiceURI;
     }
 	# AuthMode can't be an empty string; it has to be either $null or a non-zero length string
 	# if($AuthMode -eq "") {
 	#	$properties['AuthMode'] = $null
-	# }
+    # }
+    if($LogoutRedirectURIs.Count -gt 0){
+        $properties.Add('LogourRedirectURIs', $LogoutRedirectURIs)
+    }
 	if($PSCmdlet.ShouldProcess("Add new $ODataType to $($Connection.Uri)")){
 		New-CobaltEntity -Connection $Connection -Properties $properties -ODataType $ODataType -Verbose:([bool]$PSBoundParameters['Verbose'].IsPresent) -Confirm:$False
 	}

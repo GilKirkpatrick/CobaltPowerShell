@@ -33,7 +33,7 @@ Function Get-CobaltAccessToken {
         [Parameter(HelpMessage="The EntityUUID of the IdP to authentication with. If not specified, the command will pick one")][System.Guid]$IDPId,
         [Parameter(HelpMessage="The EntityUUID of the application to authenticate with. If not specified, the command will pick one")][System.Guid]$SPId
     )
-Write-Output 'foo'
+
     if($Credential -eq $null -or $Credential.UserName -eq $null){
         Throw "You must provide a username and password to authenticate with"
     }
@@ -43,12 +43,14 @@ Write-Output 'foo'
         if($IDP -eq $null){
             Throw "Could not find an IDP Endpoint to authenticate with"
         }
+        Write-Verbose "IDPEndpoint...`n$($IDP | ConvertTo-JSON -Depth 6)"
     }
     if($SPId -eq $null){
         $SP = (Get-CobaltServiceProvider -Connection $Connection | Select -First 1)
         if($SP -eq $null){
             Throw "Could not find an ServiceProvider to authenticate with"
         }
+        Write-Verbose "ServiceProvider...`n$($SP | ConvertTo-JSON -Depth 6)"
     }
 
     # Compose the full path of the IDP using the OData URI minus the 'tenant/odata' part
@@ -63,23 +65,27 @@ Write-Output 'foo'
     if($OpenIDConfig -eq $null){
         Throw "Unable to retrieve $IDPEndpoint/.well-known/openid-configuration"
     }
+    Write-Verbose "IDP metadata...`n$($OpenIDConfig | ConvertTo-JSON)"
 
     $Password = $Credential.GetNetworkCredential().password
     $AuthNRequest = "client_id=$([System.Web.HttpUtility]::UrlEncode($SP.EntityUUID))" +
         "&redirect_uri=$([System.Web.HttpUtility]::UrlEncode($SP.Callback[0]))" +
-        "&response_type=token" +
+        "&response_type=code token id_token" +
         "&scope=openid" +
         "&state=$([System.Web.HttpUtility]::UrlEncode([System.Guid]::NewGuid().Guid))" +
         "&nonce=$([System.Web.HttpUtility]::UrlEncode([System.Guid]::NewGuid().Guid))" +
         "&username=$($Credential.UserName)" +
         "&password=$Password"
 
+    Write-Verbose "Authentication URI...`n$AuthNRequest"
     $Session = $null
-    $Response = Invoke-WebRequest -URI $OpenIDConfig.authorization_endpoint -Method Post -Body $AuthNRequest -SessionVariable 'Session' -MaximumRedirection 0 -ErrorAction Ignore -ContentType "application/x-www-form-urlencoded"
+    $Response = Invoke-WebRequest -URI $OpenIDConfig.authorization_endpoint -Method Post -Body $AuthNRequest -SessionVariable 'Session' -MaximumRedirection 0 -ErrorAction Ignore -ContentType "application/x-www-form-urlencoded" -UseBasicParsing
     if($Response.StatusCode -ne 302){
+        Write-Output $Response
         Throw "Expected 302 redirect from login request and got $($Response.StatusCode) instead."
     }
 
+    Write-Verbose "Redirect URI...`n$($Response.Headers["Location"])"
     # The access token is provided as query parameter in the Location URI
     $ApplicationLoginURI = New-Object -TypeName 'System.URI' -ArgumentList ($Response.Headers["Location"])
     if($ApplicationLoginURI.Fragment -notmatch '(#|&)access_token=(?<token>([^&]*))'){

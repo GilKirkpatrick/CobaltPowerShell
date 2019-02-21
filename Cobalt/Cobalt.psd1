@@ -63,7 +63,7 @@ RequiredAssemblies = @()
 # FormatsToProcess = @()
 
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
-NestedModules = @('Cobalt-Connection.psm1', 'Cobalt-Metadata.psm1', 'Cobalt-TenantManagement.psm1', 'Cobalt-ServiceManagement.psm1', 'Cobalt-EC2.psm1', 'Cobalt-Identity.psm1', '.\Test-OIDCEndpoint.psm1')
+NestedModules = @('Cobalt-Connection.psm1', 'Cobalt-Metadata.psm1', 'Cobalt-TenantManagement.psm1', 'Cobalt-ServiceManagement.psm1', 'Cobalt-Identity.psm1')
 
 # Functions to export from this module
 FunctionsToExport = @(
@@ -136,6 +136,8 @@ FunctionsToExport = @(
 	'New-CobaltPasswordPolicy',
 	'New-CobaltAuditPolicy',
 	'Get-CobaltAuditPolicy',
+	'New-CobaltCommandServiceProvider',
+	'Get-CobaltCommandServiceProvider',
     # 'Get-CobaltScheduleService',
 	# 'New-CobaltScheduleService',
     # 'Get-CobaltScheduleEntry',
@@ -150,11 +152,6 @@ FunctionsToExport = @(
 	'New-CobaltCEFLoggingService',
 	'Get-CobaltCEFLoggingService',
 	'Get-CobaltAccessToken',
-	'New-CobaltEnvironment',
-	'New-CobaltCentosHost',
-	'New-CobaltSshConnection',
-	'Invoke-CobaltSSHCommand',
-
 	'Get-CobaltOIDCConfiguration',
 	'Get-CobaltAccessToken',
 	'Find-OrCreateIdentityProvider',
@@ -180,7 +177,7 @@ AliasesToExport = ''
 ModuleList = @()
 
 # List of all files packaged with this module
-FileList = @('Cobalt-Connection.psm1''Cobalt-Base.psm1', 'Cobalt-Metadata.psm1', 'Cobalt-TenantManagement.psm1', 'Cobalt-Identity.psm1', 'Cobalt-EC2.psm1')
+FileList = @('Cobalt-Connection.psm1', 'Cobalt-Base.psm1', 'Cobalt-Metadata.psm1', 'Cobalt-TenantManagement.psm1', 'Cobalt-Identity.psm1')
 
 # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
 PrivateData = @{
